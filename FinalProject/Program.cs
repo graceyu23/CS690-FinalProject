@@ -3,9 +3,9 @@ using ServiceManagement;
 
 namespace CustomerManagement
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             CustomerManager customerManager = new CustomerManager();
             ServiceManager serviceManager = new ServiceManager();
