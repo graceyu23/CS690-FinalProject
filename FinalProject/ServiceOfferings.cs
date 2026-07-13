@@ -15,14 +15,13 @@ namespace ServiceManagement
             return $"ID:{ServiceId, -3} | {ServiceName, -16} | Duration:{Duration, -8} | Price:{Price, -6} | Products: {ProductsRequired}";
         }
     } 
-
-public class ServiceManager
-{
-    private List<Service> _services = new List<Service>();
-    private int _nextId = 1;
-    
-    // ========== FR1: Add a new service ==========
-    public Service AddService(string name, string duration, string price, string products_required)
+    public class ServiceManager
+    {
+        private List<Service> _services = new List<Service>();
+        private int _nextId = 1;
+        
+        // ========== FR1: Add a new service ==========
+        public Service AddService(string name, string duration, string price, string products_required)
         {
             Service newService = new Service
             {
@@ -35,7 +34,7 @@ public class ServiceManager
              
 
             _services.Add(newService);
-            Console.WriteLine($"\n✅ Service ID {id} added successfully.\n");
+            Console.WriteLine($"\n✅ Service ID {newService.ServiceId} added successfully.\n");
             return newService;
         }
 
@@ -97,5 +96,5 @@ public class ServiceManager
             Console.WriteLine("----------------------\n");
         }
 
-    
+    }
 }
