@@ -35,6 +35,7 @@ public class ServiceManager
              
 
             _services.Add(newService);
+            Console.WriteLine($"\n✅ Service ID {id} added successfully.\n");
             return newService;
         }
 
@@ -96,5 +97,5 @@ public class ServiceManager
             Console.WriteLine("----------------------\n");
         }
 
-    }
+    
 }
