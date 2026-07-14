@@ -10,10 +10,6 @@ namespace CustomerManagement
             CustomerManager customerManager = new CustomerManager();
             ServiceManager serviceManager = new ServiceManager();
 
-            
-            serviceManager.AddService("Haircut", "30 min", "$40", "Shampoo, Conditioner");
-            serviceManager.AddService("Color Treatment", "90 min", "$120", "Color dye, Developer");
-            serviceManager.AddService("Highlights", "60 min", "$90", "Foil, Lightener, Toner");
 
             int choice = 0;
 

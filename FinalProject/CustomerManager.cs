@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace CustomerManagement
 {
@@ -16,91 +17,83 @@ namespace CustomerManagement
     {
         private List<Customer> _customers = new List<Customer>();
         private int _nextId = 1;
+        private string _filePath = "customers.txt";
 
-        // ========== FR1: Add a new customer ==========
-        public Customer AddCustomer(string name, string phone, string email, decimal balance)
+        public CustomerManager()
         {
-            Customer newCustomer = new Customer();
-            newCustomer.Id = _nextId;
-            _nextId = _nextId + 1;
-            newCustomer.Name = name;
-            newCustomer.Phone = phone;
-            newCustomer.Email = email;
-            newCustomer.Balance = balance;
-
-            _customers.Add(newCustomer);
-            return newCustomer;
-        }
-
-        // ========== FR2: Display all customers ==========
-        public void DisplayAllCustomers()
-        {
+            LoadFromFile();
             if (_customers.Count == 0)
             {
-                Console.WriteLine("\n--- No customers in the system. ---");
-                return;
+                // Add 3 default customers
+                AddCustomer("Jerry Li", "777-1000", "jerry@sample.com", 100);
+                AddCustomer("Jessica Smith", "777-2000", "jessika@sample.com", 300);
+                AddCustomer("Ben Kim", "777-3000", "ben@sample.com", 500);
+                SaveToFile();
             }
+        }
 
+        public Customer AddCustomer(string name, string phone, string email, decimal balance)
+        {
+            var c = new Customer { Id = _nextId++, Name = name, Phone = phone, Email = email, Balance = balance };
+            _customers.Add(c);
+            SaveToFile();
+            Console.WriteLine($"\n✅ Customer added! ID: {c.Id}\n");
+            return c;
+        }
+
+        public void DisplayAllCustomers()
+        {
+            if (_customers.Count == 0) { Console.WriteLine("\n--- No customers. ---\n"); return; }
             Console.WriteLine("\n--- All Customers ---");
-            foreach (Customer c in _customers)
-            {
-                Console.WriteLine($"ID: {c.Id} | Name: {c.Name} | Phone: {c.Phone} | Email: {c.Email} | Balance: ${c.Balance}");
-            }
+            foreach (var c in _customers)
+                Console.WriteLine($"ID: {c.Id} | {c.Name} | {c.Phone} | {c.Email} | ${c.Balance}");
             Console.WriteLine("----------------------\n");
         }
 
-        // ========== FR2: Display a customer by ID ==========
         public void DisplayCustomerById(int id)
         {
-            Customer foundCustomer = null;
-            foreach (Customer c in _customers)
-            {
-                if (c.Id == id)
-                {
-                    foundCustomer = c;
-                    break;
-                }
-            }
-
-            if (foundCustomer == null)
-            {
-                Console.WriteLine($"\n--- Customer with ID {id} not found. ---\n");
-                return;
-            }
-
-            Console.WriteLine("\n--- Customer Details ---");
-            Console.WriteLine($"ID: {foundCustomer.Id}");
-            Console.WriteLine($"Name: {foundCustomer.Name}");
-            Console.WriteLine($"Phone: {foundCustomer.Phone}");
-            Console.WriteLine($"Email: {foundCustomer.Email}");
-            Console.WriteLine($"Balance: ${foundCustomer.Balance}");
-            Console.WriteLine("------------------------\n");
+            var c = _customers.Find(x => x.Id == id);
+            if (c == null) { Console.WriteLine($"\n--- Customer {id} not found. ---\n"); return; }
+            Console.WriteLine($"\nID: {c.Id}\nName: {c.Name}\nPhone: {c.Phone}\nEmail: {c.Email}\nBalance: ${c.Balance}\n");
         }
 
-        // ========== FR3: Update customer balance ==========
         public void UpdateCustomerBalance(int id, decimal newBalance)
         {
-            Customer foundCustomer = null;
-            foreach (Customer c in _customers)
+            var c = _customers.Find(x => x.Id == id);
+            if (c == null) { Console.WriteLine($"\n--- Customer {id} not found. ---\n"); return; }
+            c.Balance = newBalance;
+            SaveToFile();
+            Console.WriteLine($"\n✅ Balance updated for {c.Name} to ${c.Balance}\n");
+        }
+
+        private void SaveToFile()
+        {
+            using var writer = new StreamWriter(_filePath);
+            foreach (var c in _customers)
+                writer.WriteLine($"{c.Id}|{c.Name}|{c.Phone}|{c.Email}|{c.Balance}");
+        }
+
+        private void LoadFromFile()
+        {
+            if (!File.Exists(_filePath)) return;
+            _customers.Clear();
+            foreach (var line in File.ReadAllLines(_filePath))
             {
-                if (c.Id == id)
+                var parts = line.Split('|');
+                if (parts.Length == 5)
                 {
-                    foundCustomer = c;
-                    break;
+                    var c = new Customer
+                    {
+                        Id = int.Parse(parts[0]),
+                        Name = parts[1],
+                        Phone = parts[2],
+                        Email = parts[3],
+                        Balance = decimal.Parse(parts[4])
+                    };
+                    _customers.Add(c);
+                    if (c.Id >= _nextId) _nextId = c.Id + 1;
                 }
             }
-
-            if (foundCustomer == null)
-            {
-                Console.WriteLine($"\n--- Customer with ID {id} not found. ---\n");
-                return;
-            }
-
-
-            // Update the balance
-            foundCustomer.Balance = newBalance;
-            Console.WriteLine($"\n✅ Balance updated successfully!");
-            Console.WriteLine($"   New balance for {foundCustomer.Name}: ${foundCustomer.Balance}\n");
         }
     }
 }
