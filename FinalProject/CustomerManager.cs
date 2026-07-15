@@ -38,6 +38,12 @@ namespace CustomerManagement
             _customers.Add(c);
             SaveToFile();
             Console.WriteLine($"\n✅ Customer added! ID: {c.Id}\n");
+            Console.WriteLine($"ID: {c.Id}");
+            Console.WriteLine($"Name: {c.Name}");
+            Console.WriteLine($"Phone: {c.Phone}");
+            Console.WriteLine($"Email: {c.Email}");
+            Console.WriteLine($"Balance: ${c.Balance}\n");
+            
             return c;
         }
 
@@ -65,6 +71,33 @@ namespace CustomerManagement
             SaveToFile();
             Console.WriteLine($"\n✅ Balance updated for {c.Name} to ${c.Balance}\n");
         }
+
+        public bool UpdateCustomerInformation(int id, string newName, string newPhone, string newEmail)
+        {
+            
+            var c = _customers.Find(x => x.Id == id);
+            if (c == null)
+            {
+                Console.WriteLine($"\n--- Customer with ID {id} not found. ---\n");
+                return false;
+                }
+                
+                if (!string.IsNullOrWhiteSpace(newName))
+                c.Name = newName;
+                if (!string.IsNullOrWhiteSpace(newPhone))
+                c.Phone = newPhone;
+                if (!string.IsNullOrWhiteSpace(newEmail))
+                c.Email = newEmail;
+
+                SaveToFile(); 
+                Console.WriteLine($"\n✅ Customer {id} updated successfully!");
+                Console.WriteLine($"   Name: {c.Name}");
+                Console.WriteLine($"   Phone: {c.Phone}");
+                Console.WriteLine($"   Email: {c.Email}");
+                Console.WriteLine($"   Balance: ${c.Balance}\n");
+                
+                return true;
+                }
 
         private void SaveToFile()
         {

@@ -1,0 +1,5 @@
+1|Jerry Li|777-1000|jerry@sample.com|100
+2|Jessica Smith|777-2000|jessika@sample.com|300
+3|Ben Kim|777-3000|ben@sample.com|500
+4|Grace u|777-400|grace@sample.com|1000
+5|Sam Edinburgh|777-5000|sam@sample.com|100

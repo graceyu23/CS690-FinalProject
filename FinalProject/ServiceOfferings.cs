@@ -8,13 +8,13 @@ namespace ServiceManagement
     {
         public int ServiceId { get; set; }
         public string ServiceName { get; set; }
-        public string Duration { get; set; }
-        public string Price { get; set; }
+        public int Duration { get; set; }
+        public int Price { get; set; }
         public string ProductsRequired { get; set; }
 
         public override string ToString()
         {
-            return $"ID:{ServiceId, -3} | {ServiceName, -16} | Duration:{Duration, -8} | Price:{Price, -6} | Products: {ProductsRequired}";
+            return $"ID:{ServiceId, -3} | {ServiceName, -16} | Duration:{Duration, -3} min | Price:${Price, -4} | Products: {ProductsRequired}";
         }
     }
 
@@ -29,16 +29,16 @@ namespace ServiceManagement
             LoadFromFile();
             if (_services.Count == 0)
             {
-                AddService("Haircut", "30 min", "$40", "Shampoo, Conditioner");
-                AddService("Color Treatment", "90 min", "$120", "Color dye, Developer");
-                AddService("Highlights", "60 min", "$90", "Foil, Lightener, Toner");
+                AddService("Haircut", 30, 40, "Shampoo, Conditioner");
+                AddService("Color Treatment", 90, 120, "Color dye, Developer");
+                AddService("Highlights", 60, 90, "Foil, Lightener, Toner");
                 SaveToFile();
             }
         }
 
-        public Service AddService(string name, string duration, string price, string products_required)
+        public Service AddService(string name, int duration, int price, string products_required)
         {
-            Service newService = new Service
+            var s = new Service
             {
                 ServiceId = _nextId++,
                 ServiceName = name,
@@ -46,38 +46,50 @@ namespace ServiceManagement
                 Price = price,
                 ProductsRequired = products_required
             };
-            _services.Add(newService);
-            Console.WriteLine($"\n✅ Service ID {newService.ServiceId} added successfully.\n");
+            _services.Add(s);
             SaveToFile();
-            return newService;
+
+            Console.WriteLine($"\n✅ Service ID {s.ServiceId} added successfully!");
+            Console.WriteLine($"ID: {s.ServiceId}");
+            Console.WriteLine($"Name: {s.ServiceName}");
+            Console.WriteLine($"Duration: {s.Duration} min");
+            Console.WriteLine($"Price: ${s.Price}");
+            Console.WriteLine($"Products Required: {s.ProductsRequired}\n");
+            return s;
         }
 
         public bool RemoveService(int id)
         {
-            Service serviceToRemove = _services.Find(s => s.ServiceId == id);
-            if (serviceToRemove == null)
+            var toRemove = _services.Find(s => s.ServiceId == id);
+            if (toRemove == null)
             {
                 Console.WriteLine($"\n--- Service with ID {id} not found. ---\n");
                 return false;
             }
-            _services.Remove(serviceToRemove);
-            Console.WriteLine($"\n✅ Service '{serviceToRemove.ServiceName}' (ID {id}) removed successfully.\n");
+            _services.Remove(toRemove);
+            Console.WriteLine($"\n✅ Service '{toRemove.ServiceName}' (ID {id}) removed successfully.\n");
             SaveToFile();
             return true;
         }
 
-        public bool UpdateServiceDetails(int id, string newName, string newDuration, string newPrice, string newProducts)
+        public bool UpdateServiceDetails(int id, string newName, int? newDuration, int? newPrice, string newProducts)
         {
-            Service service = _services.Find(s => s.ServiceId == id);
+            var service = _services.Find(s => s.ServiceId == id);
             if (service == null)
             {
                 Console.WriteLine($"\n--- Service with ID {id} not found. ---\n");
                 return false;
             }
-            if (!string.IsNullOrWhiteSpace(newName)) service.ServiceName = newName;
-            if (!string.IsNullOrWhiteSpace(newDuration)) service.Duration = newDuration;
-            if (!string.IsNullOrWhiteSpace(newPrice)) service.Price = newPrice;
-            if (!string.IsNullOrWhiteSpace(newProducts)) service.ProductsRequired = newProducts;
+
+            if (!string.IsNullOrWhiteSpace(newName))
+                service.ServiceName = newName;
+            if (newDuration.HasValue && newDuration.Value >= 0)
+                service.Duration = newDuration.Value;
+            if (newPrice.HasValue && newPrice.Value >= 0)
+                service.Price = newPrice.Value;
+            if (!string.IsNullOrWhiteSpace(newProducts))
+                service.ProductsRequired = newProducts;
+
             Console.WriteLine($"\n✅ Service ID {id} updated successfully.\n");
             SaveToFile();
             return true;
@@ -91,7 +103,7 @@ namespace ServiceManagement
                 return;
             }
             Console.WriteLine("\n--- All Services ---");
-            foreach (Service s in _services)
+            foreach (var s in _services)
                 Console.WriteLine(s.ToString());
             Console.WriteLine("----------------------\n");
         }
@@ -117,8 +129,8 @@ namespace ServiceManagement
                     {
                         ServiceId = int.Parse(parts[0]),
                         ServiceName = parts[1],
-                        Duration = parts[2],
-                        Price = parts[3],
+                        Duration = int.Parse(parts[2]),
+                        Price = int.Parse(parts[3]),
                         ProductsRequired = parts[4]
                     };
                     _services.Add(s);

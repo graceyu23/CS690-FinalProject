@@ -1,0 +1,2 @@
+Id|CustomerId|ServiceId|StylistId|DateTime|Notes
+1|2|3|4|2026-07-20 14:00|
