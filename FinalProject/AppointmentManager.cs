@@ -193,7 +193,6 @@ namespace CustomerManagement
         private void SaveAppointments()
         {
             using var w = new StreamWriter(_appointmentFile);
-            w.WriteLine("Id|CustomerId|ServiceId|StylistId|DateTime|Notes");
             foreach (var a in _appointments)
                 w.WriteLine($"{a.Id}|{a.CustomerId}|{a.ServiceId}|{a.StylistId}|{a.DateTime:yyyy-MM-dd HH:mm}|{a.Notes}");
         }
