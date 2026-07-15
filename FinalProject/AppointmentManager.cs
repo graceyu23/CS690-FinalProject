@@ -201,25 +201,31 @@ namespace CustomerManagement
         {
             if (!File.Exists(_appointmentFile)) return;
             _appointments.Clear();
-            foreach (var line in File.ReadAllLines(_appointmentFile))
+            var lines = File.ReadAllLines(_appointmentFile);
+            foreach (var line in lines)
+            
             {
-                var p = line.Split('|');
-                if (p.Length == 6)
-                {
-                    var a = new Appointment
-                    {
-                        Id = int.Parse(p[0]),
-                        CustomerId = int.Parse(p[1]),
-                        ServiceId = int.Parse(p[2]),
-                        StylistId = int.Parse(p[3]),
-                        DateTime = DateTime.Parse(p[4]),
-                        Notes = p[5]
-                    };
-                    _appointments.Add(a);
-                    if (a.Id >= _nextAppointmentId) _nextAppointmentId = a.Id + 1;
-                }
-            }
+    
+        if (line.StartsWith("Id|") || string.IsNullOrWhiteSpace(line))
+            continue;
+
+        var p = line.Split('|');
+        if (p.Length == 6)
+        {
+            var a = new Appointment
+            {
+                Id = int.Parse(p[0]),
+                CustomerId = int.Parse(p[1]),
+                ServiceId = int.Parse(p[2]),
+                StylistId = int.Parse(p[3]),
+                DateTime = DateTime.Parse(p[4]),
+                Notes = p[5]
+            };
+            _appointments.Add(a);
+            if (a.Id >= _nextAppointmentId) _nextAppointmentId = a.Id + 1;
         }
+    }
+}
 
         private void SaveStylists()
         {
